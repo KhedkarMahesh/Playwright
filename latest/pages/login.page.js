@@ -78,21 +78,24 @@ class LogIn {
   async cartvalidation (reqItems){
 
             let addedItemNum = await this.page.locator('.shopping_cart_badge').textContent();
-
             if(addedItemNum >="1"){
                 let addToCart = await this.page.locator('.shopping_cart_link').click();
                 let cartItem = await this.page.locator('.cart_item').allTextContents();
                 //console.log(cartItem);
                 for (const prodTocheck of reqItems) {
-
-                    for (let i = 0 ; i < cartItem.length; i++){  
+                    let prodFound ;
+                    for (let i = 0 ; i < cartItem.length; i++){ 
+                        let prodFound = 0; 
                         let cartItemname = await this.page.locator('.inventory_item_name').nth(i).textContent();
-                        if(cartItemname === prodTocheck){
+                        while(cartItemname === prodTocheck){
                             console.log("Required Item : " + prodTocheck +" is added to cart Successfully."); 
+                            prodFound++
                             break;
-                        }else{
-                            console.log("Required Item : " + prodTocheck +" is not added to cart."); 
+                            return prodFound;
                         }
+                    }
+                    while( prodFound ==0 ){
+                        console.log("Required Item : " + prodTocheck +" is not added to cart."); 
                     }
 
                 }
